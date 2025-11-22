@@ -75,10 +75,10 @@ if [ -f "requirements.txt" ]; then
         fi
         
         # Check if package is installed
-        if ! python -c "import $PACKAGE_NAME" &>/dev/null; then
+        if ! .venv/bin/python -c "import $PACKAGE_NAME" &>/dev/null; then
             # For packages with hyphens, try with underscores as well (like PyQt6)
             PACKAGE_NAME_UNDERSCORES=${PACKAGE_NAME//-/_}
-            if ! python -c "import $PACKAGE_NAME_UNDERSCORES" &>/dev/null; then
+            if ! .venv/bin/python -c "import $PACKAGE_NAME_UNDERSCORES" &>/dev/null; then
                 REQUIREMENTS_SATISFIED=false
                 echo "Package '$PACKAGE_NAME' is not installed or importable"
                 break
