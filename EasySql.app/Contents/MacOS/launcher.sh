@@ -103,7 +103,7 @@ echo "================================"
 echo ""
 
 # Run the application
-python easySql.py
+.venv/bin/python easySql.py
 
 # Keep terminal open on error
 if [ $? -ne 0 ]; then
