@@ -52,11 +52,47 @@ fi
 echo "Activating virtual environment..."
 source .venv/bin/activate
 
-# Install/update requirements
+# Install/update requirements only if needed
 if [ -f "requirements.txt" ]; then
-    echo "Installing requirements with uv pip..."
-    uv pip install -r requirements.txt
-    echo "Requirements installed!"
+    echo "Checking if requirements are already installed..."
+    
+    # Activate virtual environment to check for installed packages
+    source .venv/bin/activate
+    
+    # Check if each package in requirements.txt is already installed
+    REQUIREMENTS_SATISFIED=true
+    
+    while IFS= read -r requirement; do
+        # Skip empty lines and comments
+        if [[ -z "$requirement" || "$requirement" =~ ^[[:space:]]*# ]]; then
+            continue
+        fi
+        
+        # Extract package name (before any version specifier)
+        PACKAGE_NAME=$(echo "$requirement" | sed 's/[>=<~!].*//' | sed 's/[[:space:]]*$//')
+        if [ -z "$PACKAGE_NAME" ]; then
+            continue
+        fi
+        
+        # Check if package is installed
+        if ! python -c "import $PACKAGE_NAME" &>/dev/null; then
+            # For packages with hyphens, try with underscores as well (like PyQt6)
+            PACKAGE_NAME_UNDERSCORES=${PACKAGE_NAME//-/_}
+            if ! python -c "import $PACKAGE_NAME_UNDERSCORES" &>/dev/null; then
+                REQUIREMENTS_SATISFIED=false
+                echo "Package '$PACKAGE_NAME' is not installed or importable"
+                break
+            fi
+        fi
+    done < requirements.txt
+    
+    if [ "$REQUIREMENTS_SATISFIED" = true ]; then
+        echo "All requirements are already installed and importable. Skipping installation."
+    else
+        echo "Installing/updating requirements with uv pip..."
+        uv pip install -r requirements.txt
+        echo "Requirements installed/updated!"
+    fi
 else
     echo "Warning: requirements.txt not found"
 fi
