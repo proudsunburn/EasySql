@@ -588,10 +588,10 @@ ORDER BY courses.course_name;'''
             },
             'JOIN_6': {
                 'id': 'JOIN_6',
-                'title_en': '6e. LEFT JOIN - Find Unmatched Rows',
-                'title_es': '6e. LEFT JOIN - Encontrar Filas Sin Coincidencia',
-                'description_en': 'LEFT JOIN with IS NULL finds rows in the left table that have NO match in the right table. This finds students not enrolled in any course.',
-                'description_es': 'LEFT JOIN con IS NULL encuentra filas en la tabla izquierda que NO tienen coincidencia en la tabla derecha. Esto encuentra estudiantes no inscritos en ningún curso.',
+                'title_en': '6e. LEFT ANTI JOIN - Find Unmatched Rows',
+                'title_es': '6e. LEFT ANTI JOIN - Encontrar Filas Sin Coincidencia',
+                'description_en': 'ANTI JOIN finds rows in one table with NO match in another table. Using LEFT JOIN with IS NULL achieves this anti-join pattern. This finds students not enrolled in any course.',
+                'description_es': 'ANTI JOIN encuentra filas en una tabla SIN coincidencia en otra tabla. Usar LEFT JOIN con IS NULL logra este patrón anti-join. Esto encuentra estudiantes no inscritos en ningún curso.',
                 'sql': '''SELECT students.name, students.email, students.country
 FROM students
 LEFT JOIN enrollments ON students.student_id = enrollments.student_id
@@ -621,10 +621,30 @@ ORDER BY courses.course_name;'''
 FROM students
 LEFT JOIN enrollments ON students.student_id = enrollments.student_id;'''
             },
+            'JOIN_9': {
+                'id': 'JOIN_9',
+                'title_en': '6h. FULL OUTER JOIN - All Records from Both Tables',
+                'title_es': '6h. FULL OUTER JOIN - Todos los Registros de Ambas Tablas',
+                'description_en': 'FULL OUTER JOIN returns ALL rows from both tables, showing NULL where there are no matches. SQLite does not support FULL OUTER JOIN directly, so this simulates it using UNION of LEFT JOIN patterns. This shows all students AND all courses, including unmatched records from both sides.',
+                'description_es': 'FULL OUTER JOIN devuelve TODAS las filas de ambas tablas, mostrando NULL donde no hay coincidencias. SQLite no soporta FULL OUTER JOIN directamente, así que esto lo simula usando UNION de patrones LEFT JOIN. Esto muestra todos los estudiantes Y todos los cursos, incluyendo registros sin coincidencia de ambos lados.',
+                'sql': '''SELECT students.name, courses.course_name, enrollments.grade
+FROM students
+LEFT JOIN enrollments ON students.student_id = enrollments.student_id
+LEFT JOIN courses ON enrollments.course_id = courses.course_id
+
+UNION
+
+SELECT students.name, courses.course_name, enrollments.grade
+FROM courses
+LEFT JOIN enrollments ON courses.course_id = enrollments.course_id
+LEFT JOIN students ON enrollments.student_id = students.student_id
+WHERE students.student_id IS NULL
+ORDER BY name, course_name;'''
+            },
             'CASE_1': {
                 'id': 'CASE_1',
-                'title_en': '6h. CASE - Grade Categories',
-                'title_es': '6h. CASE - Categorías de Calificaciones',
+                'title_en': '6i. CASE - Grade Categories',
+                'title_es': '6i. CASE - Categorías de Calificaciones',
                 'description_en': 'CASE creates conditional logic in SQL. This categorizes grades as Excellent (>3.5), Good (3.0-3.5), Pass (2.0-3.0), or Fail (<2.0).',
                 'description_es': 'CASE crea lógica condicional en SQL. Esto categoriza calificaciones como Excelente (>3.5), Bueno (3.0-3.5), Aprobado (2.0-3.0), o Reprobado (<2.0).',
                 'sql': '''SELECT
@@ -644,8 +664,8 @@ ORDER BY enrollments.grade DESC;'''
             },
             'CASE_2': {
                 'id': 'CASE_2',
-                'title_en': '6i. CASE - Multiple Conditions',
-                'title_es': '6i. CASE - Múltiples Condiciones',
+                'title_en': '6j. CASE - Multiple Conditions',
+                'title_es': '6j. CASE - Múltiples Condiciones',
                 'description_en': 'CASE with multiple conditions. This categorizes students by age groups: Youth (<21), Young Adult (21-25), Adult (>25).',
                 'description_es': 'CASE con múltiples condiciones. Esto categoriza estudiantes por grupos de edad: Joven (<21), Adulto Joven (21-25), Adulto (>25).',
                 'sql': '''SELECT
@@ -668,8 +688,8 @@ ORDER BY age;'''
             },
             'CASE_3': {
                 'id': 'CASE_3',
-                'title_en': '6j. CASE with JOIN - Complex Logic',
-                'title_es': '6j. CASE con JOIN - Lógica Compleja',
+                'title_en': '6k. CASE with JOIN - Complex Logic',
+                'title_es': '6k. CASE con JOIN - Lógica Compleja',
                 'description_en': 'CASE combined with JOIN for complex logic. This shows student performance and credit earned based on grade.',
                 'description_es': 'CASE combinado con JOIN para lógica compleja. Esto muestra rendimiento estudiantil y créditos obtenidos basados en calificación.',
                 'sql': '''SELECT
@@ -693,8 +713,8 @@ ORDER BY students.name, enrollments.grade DESC;'''
             },
             'CASE_4': {
                 'id': 'CASE_4',
-                'title_en': '6k. CASE with GROUP BY - Aggregation',
-                'title_es': '6k. CASE con GROUP BY - Agregación',
+                'title_en': '6l. CASE with GROUP BY - Aggregation',
+                'title_es': '6l. CASE con GROUP BY - Agregación',
                 'description_en': 'CASE with GROUP BY and aggregation functions. This counts how many students achieved each grade level per course.',
                 'description_es': 'CASE con GROUP BY y funciones de agregación. Esto cuenta cuántos estudiantes alcanzaron cada nivel de calificación por curso.',
                 'sql': '''SELECT
