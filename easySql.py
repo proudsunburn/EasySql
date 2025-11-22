@@ -529,14 +529,186 @@ class LessonManager:
             },
             'JOIN_1': {
                 'id': 'JOIN_1',
-                'title_en': '6. JOIN - Combine Tables',
-                'title_es': '6. JOIN - Combinar Tablas',
-                'description_en': 'JOIN combines rows from two or more tables based on a related column. INNER JOIN returns matching rows.',
-                'description_es': 'JOIN combina filas de dos o más tablas basándose en una columna relacionada. INNER JOIN devuelve filas coincidentes.',
+                'title_en': '6. INNER JOIN - Combine Tables',
+                'title_es': '6. INNER JOIN - Combinar Tablas',
+                'description_en': 'INNER JOIN combines rows from two or more tables based on a related column. It returns only matching rows from both tables.',
+                'description_es': 'INNER JOIN combina filas de dos o más tablas basándose en una columna relacionada. Devuelve solo las filas coincidentes de ambas tablas.',
                 'sql': '''SELECT students.name, courses.course_name, enrollments.grade
 FROM enrollments
 INNER JOIN students ON enrollments.student_id = students.student_id
 INNER JOIN courses ON enrollments.course_id = courses.course_id;'''
+            },
+            'JOIN_2': {
+                'id': 'JOIN_2',
+                'title_en': '6a. INNER JOIN - Simple Two Tables',
+                'title_es': '6a. INNER JOIN - Dos Tablas Simples',
+                'description_en': 'INNER JOIN with just two tables. This shows students and their enrollment dates, excluding students without enrollments.',
+                'description_es': 'INNER JOIN con solo dos tablas. Esto muestra estudiantes y sus fechas de inscripción, excluyendo estudiantes sin inscripciones.',
+                'sql': '''SELECT students.name, students.country, enrollments.enrollment_date
+FROM students
+INNER JOIN enrollments ON students.student_id = enrollments.student_id
+ORDER BY enrollments.enrollment_date;'''
+            },
+            'JOIN_3': {
+                'id': 'JOIN_3',
+                'title_en': '6b. INNER JOIN - With WHERE Filter',
+                'title_es': '6b. INNER JOIN - Con Filtro WHERE',
+                'description_en': 'INNER JOIN combined with WHERE clause to filter results. This shows only students with grades above 3.5.',
+                'description_es': 'INNER JOIN combinado con cláusula WHERE para filtrar resultados. Esto muestra solo estudiantes con calificaciones superiores a 3.5.',
+                'sql': '''SELECT students.name, courses.course_name, enrollments.grade
+FROM enrollments
+INNER JOIN students ON enrollments.student_id = students.student_id
+INNER JOIN courses ON enrollments.course_id = courses.course_id
+WHERE enrollments.grade > 3.5
+ORDER BY enrollments.grade DESC;'''
+            },
+            'JOIN_4': {
+                'id': 'JOIN_4',
+                'title_en': '6c. LEFT JOIN - All Students',
+                'title_es': '6c. LEFT JOIN - Todos los Estudiantes',
+                'description_en': 'LEFT JOIN returns ALL rows from the left table (students), even if there are no matches in the right table (enrollments). Unmatched rows show NULL.',
+                'description_es': 'LEFT JOIN devuelve TODAS las filas de la tabla izquierda (estudiantes), incluso si no hay coincidencias en la tabla derecha (inscripciones). Las filas sin coincidencia muestran NULL.',
+                'sql': '''SELECT students.name, students.country, courses.course_name, enrollments.grade
+FROM students
+LEFT JOIN enrollments ON students.student_id = enrollments.student_id
+LEFT JOIN courses ON enrollments.course_id = courses.course_id
+ORDER BY students.name;'''
+            },
+            'JOIN_5': {
+                'id': 'JOIN_5',
+                'title_en': '6d. LEFT JOIN - All Courses',
+                'title_es': '6d. LEFT JOIN - Todos los Cursos',
+                'description_en': 'LEFT JOIN showing all courses and their enrollments. Courses with no students enrolled will show NULL in student columns.',
+                'description_es': 'LEFT JOIN mostrando todos los cursos y sus inscripciones. Los cursos sin estudiantes inscritos mostrarán NULL en las columnas de estudiantes.',
+                'sql': '''SELECT courses.course_name, courses.instructor, students.name, enrollments.grade
+FROM courses
+LEFT JOIN enrollments ON courses.course_id = enrollments.course_id
+LEFT JOIN students ON enrollments.student_id = students.student_id
+ORDER BY courses.course_name;'''
+            },
+            'JOIN_6': {
+                'id': 'JOIN_6',
+                'title_en': '6e. LEFT JOIN - Find Unmatched Rows',
+                'title_es': '6e. LEFT JOIN - Encontrar Filas Sin Coincidencia',
+                'description_en': 'LEFT JOIN with IS NULL finds rows in the left table that have NO match in the right table. This finds students not enrolled in any course.',
+                'description_es': 'LEFT JOIN con IS NULL encuentra filas en la tabla izquierda que NO tienen coincidencia en la tabla derecha. Esto encuentra estudiantes no inscritos en ningún curso.',
+                'sql': '''SELECT students.name, students.email, students.country
+FROM students
+LEFT JOIN enrollments ON students.student_id = enrollments.student_id
+WHERE enrollments.enrollment_id IS NULL;'''
+            },
+            'JOIN_7': {
+                'id': 'JOIN_7',
+                'title_en': '6f. RIGHT JOIN - All Courses',
+                'title_es': '6f. RIGHT JOIN - Todos los Cursos',
+                'description_en': 'RIGHT JOIN returns ALL rows from the right table (courses), even if there are no matches in the left table. Note: SQLite does not support RIGHT JOIN, so this uses LEFT JOIN with reversed table order.',
+                'description_es': 'RIGHT JOIN devuelve TODAS las filas de la tabla derecha (cursos), incluso si no hay coincidencias en la tabla izquierda. Nota: SQLite no soporta RIGHT JOIN, así que esto usa LEFT JOIN con orden de tablas invertido.',
+                'sql': '''SELECT courses.course_name, courses.credits, students.name
+FROM courses
+LEFT JOIN enrollments ON courses.course_id = enrollments.course_id
+LEFT JOIN students ON enrollments.student_id = students.student_id
+ORDER BY courses.course_name;'''
+            },
+            'JOIN_8': {
+                'id': 'JOIN_8',
+                'title_en': '6g. Understanding JOIN Types',
+                'title_es': '6g. Entendiendo Tipos de JOIN',
+                'description_en': 'This query demonstrates the difference between INNER JOIN and LEFT JOIN. INNER JOIN shows only enrolled students, LEFT JOIN shows all students.',
+                'description_es': 'Esta consulta demuestra la diferencia entre INNER JOIN y LEFT JOIN. INNER JOIN muestra solo estudiantes inscritos, LEFT JOIN muestra todos los estudiantes.',
+                'sql': '''SELECT
+    COUNT(DISTINCT students.student_id) as total_students,
+    COUNT(DISTINCT enrollments.enrollment_id) as total_enrollments
+FROM students
+LEFT JOIN enrollments ON students.student_id = enrollments.student_id;'''
+            },
+            'CASE_1': {
+                'id': 'CASE_1',
+                'title_en': '6h. CASE - Grade Categories',
+                'title_es': '6h. CASE - Categorías de Calificaciones',
+                'description_en': 'CASE creates conditional logic in SQL. This categorizes grades as Excellent (>3.5), Good (3.0-3.5), Pass (2.0-3.0), or Fail (<2.0).',
+                'description_es': 'CASE crea lógica condicional en SQL. Esto categoriza calificaciones como Excelente (>3.5), Bueno (3.0-3.5), Aprobado (2.0-3.0), o Reprobado (<2.0).',
+                'sql': '''SELECT
+    students.name,
+    courses.course_name,
+    enrollments.grade,
+    CASE
+        WHEN enrollments.grade >= 3.5 THEN 'Excellent'
+        WHEN enrollments.grade >= 3.0 THEN 'Good'
+        WHEN enrollments.grade >= 2.0 THEN 'Pass'
+        ELSE 'Fail'
+    END as grade_category
+FROM enrollments
+INNER JOIN students ON enrollments.student_id = students.student_id
+INNER JOIN courses ON enrollments.course_id = courses.course_id
+ORDER BY enrollments.grade DESC;'''
+            },
+            'CASE_2': {
+                'id': 'CASE_2',
+                'title_en': '6i. CASE - Multiple Conditions',
+                'title_es': '6i. CASE - Múltiples Condiciones',
+                'description_en': 'CASE with multiple conditions. This categorizes students by age groups: Youth (<21), Young Adult (21-25), Adult (>25).',
+                'description_es': 'CASE con múltiples condiciones. Esto categoriza estudiantes por grupos de edad: Joven (<21), Adulto Joven (21-25), Adulto (>25).',
+                'sql': '''SELECT
+    name,
+    age,
+    country,
+    CASE
+        WHEN age < 21 THEN 'Youth'
+        WHEN age BETWEEN 21 AND 25 THEN 'Young Adult'
+        ELSE 'Adult'
+    END as age_group,
+    CASE
+        WHEN country IN ('USA', 'Canada', 'Mexico') THEN 'North America'
+        WHEN country IN ('Spain', 'France', 'Germany') THEN 'Europe'
+        WHEN country IN ('China', 'Japan', 'Korea') THEN 'Asia'
+        ELSE 'Other'
+    END as region
+FROM students
+ORDER BY age;'''
+            },
+            'CASE_3': {
+                'id': 'CASE_3',
+                'title_en': '6j. CASE with JOIN - Complex Logic',
+                'title_es': '6j. CASE con JOIN - Lógica Compleja',
+                'description_en': 'CASE combined with JOIN for complex logic. This shows student performance and credit earned based on grade.',
+                'description_es': 'CASE combinado con JOIN para lógica compleja. Esto muestra rendimiento estudiantil y créditos obtenidos basados en calificación.',
+                'sql': '''SELECT
+    students.name,
+    courses.course_name,
+    courses.credits,
+    enrollments.grade,
+    CASE
+        WHEN enrollments.grade >= 2.0 THEN courses.credits
+        ELSE 0
+    END as credits_earned,
+    CASE
+        WHEN enrollments.grade >= 3.5 THEN 'Honor Roll'
+        WHEN enrollments.grade >= 2.0 THEN 'Passed'
+        ELSE 'Failed'
+    END as status
+FROM enrollments
+INNER JOIN students ON enrollments.student_id = students.student_id
+INNER JOIN courses ON enrollments.course_id = courses.course_id
+ORDER BY students.name, enrollments.grade DESC;'''
+            },
+            'CASE_4': {
+                'id': 'CASE_4',
+                'title_en': '6k. CASE with GROUP BY - Aggregation',
+                'title_es': '6k. CASE con GROUP BY - Agregación',
+                'description_en': 'CASE with GROUP BY and aggregation functions. This counts how many students achieved each grade level per course.',
+                'description_es': 'CASE con GROUP BY y funciones de agregación. Esto cuenta cuántos estudiantes alcanzaron cada nivel de calificación por curso.',
+                'sql': '''SELECT
+    courses.course_name,
+    COUNT(*) as total_students,
+    SUM(CASE WHEN enrollments.grade >= 3.5 THEN 1 ELSE 0 END) as excellent_count,
+    SUM(CASE WHEN enrollments.grade >= 3.0 AND enrollments.grade < 3.5 THEN 1 ELSE 0 END) as good_count,
+    SUM(CASE WHEN enrollments.grade >= 2.0 AND enrollments.grade < 3.0 THEN 1 ELSE 0 END) as pass_count,
+    SUM(CASE WHEN enrollments.grade < 2.0 THEN 1 ELSE 0 END) as fail_count,
+    ROUND(AVG(enrollments.grade), 2) as avg_grade
+FROM enrollments
+INNER JOIN courses ON enrollments.course_id = courses.course_id
+GROUP BY courses.course_name
+ORDER BY avg_grade DESC;'''
             },
             'INSERT_1': {
                 'id': 'INSERT_1',
